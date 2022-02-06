@@ -4,6 +4,7 @@ import sequelize from "../sequelize";
 
 export default class Release extends Model {
     declare id: string
+    declare title: string
     declare releaseGroup: string
     declare notes?: string
     declare dualAudio: boolean
@@ -22,6 +23,10 @@ Release.init(
         id: {
             type: DataTypes.UUID,
             primaryKey: true
+        },
+        title: {
+            type: DataTypes.TEXT,
+            allowNull: false,
         },
         releaseGroup: {
             type: DataTypes.TEXT,

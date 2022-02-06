@@ -9,6 +9,7 @@ import {getAllReleases, ReleaseList} from "../../../utils/shows";
 import {getSession} from "next-auth/react";
 import ShowName from "../../../modals/ShowName";
 
+// sequelize.sync({force: true})
 interface CreateShowRequest {
     title: { title: string, lang: string }[]
     isMovie: true,
@@ -26,6 +27,7 @@ export default async function handler(
             res.json(releases)
             break;
         case 'POST':
+/*
             if (session === null) {
                 res.status(401).end('Authentication required')
                 return
@@ -36,6 +38,7 @@ export default async function handler(
                 res.status(403).end('Must be editor')
                 return
             }
+*/
             const body = req.body as CreateShowRequest
             try {
                 await sequelize.transaction(async () => {
