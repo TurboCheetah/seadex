@@ -34,7 +34,7 @@ export default function CenteredTabs({value, setValue}: {value: number, setValue
     };
 
     return (
-        <Box sx={{ width: '100%', bgcolor: 'background.paper' }}>
+        <Box sx={{ width: '100%', bgcolor: 'background.paper', height: '48px' }}>
             <Tabs value={value} onChange={handleChange} centered>
                 <Tab label="Shows" />
                 <Tab label="Movies" />
