@@ -22,6 +22,7 @@ import SeasonDetailsDialog from "./SeasonDetailsDialog";
 
 // from https://stackoverflow.com/a/47385953
 function groupByKey<T>(list: T[], key: string): { [p: string]: T[] } {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return list.reduce((hash: any, obj: any) => ({
         ...hash,
         [obj[key]]: (hash[obj[key]] || []).concat(obj)
@@ -50,14 +51,14 @@ const DisplayRelease = ({release}: { release?: Release }) => {
 function TitleTableCell({title}: { title: string }) {
     let desc;
     switch (title) {
-        case 'Best':
-            desc = 'best release'
-            break
-        case 'Alternative':
-            desc = 'alt release'
-            break
-        default:
-            throw Error('unreachable')
+    case 'Best':
+        desc = 'best release'
+        break
+    case 'Alternative':
+        desc = 'alt release'
+        break
+    default:
+        throw Error('unreachable')
     }
     return (
         <TableCell align='center'>

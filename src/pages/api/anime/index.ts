@@ -18,14 +18,15 @@ export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse<ReleaseList>
 ) {
-    const session = await getSession({ req })
+    const session = await getSession({req})
     switch (req.method) {
-        case 'GET':
-            const releases = await getAllReleases()
-            res.json(releases)
-            break;
-        case 'POST':
-/*
+    case 'GET': {
+        const releases = await getAllReleases()
+        res.json(releases)
+        break;
+    }
+    case 'POST': {
+        /*
             if (session === null) {
                 res.status(401).end('Authentication required')
                 return
@@ -37,43 +38,45 @@ export default async function handler(
                 return
             }
 */
-            const body = req.body as CreateShowRequest
-            try {
-                await sequelize.transaction(async () => {
-                    const createdShow = await Show.create({
-                        id: randomUUID(),
-                        isMovie: body.isMovie,
-                    })
-
-                    for (const title of body.title) {
-                        await ShowName.create({
-                            title: title.title,
-                            language: title.lang,
-                            show: createdShow.id,
-                            id: randomUUID(),
-                        })
-                    }
-
-                    for (const release of body.releases) {
-                        const createdRelease = await Release.create({
-                            ...release,
-                            id: randomUUID()
-                        })
-                        await ShowRelease.create({
-                            show: createdShow.id,
-                            release: createdRelease.id,
-                            type: release.type
-                        })
-                    }
-                    res.status(201).end()
+        const body = req.body as CreateShowRequest
+        try {
+            await sequelize.transaction(async () => {
+                const createdShow = await Show.create({
+                    id: randomUUID(),
+                    isMovie: body.isMovie,
                 })
-            } catch (e: any) {
-                res.status(500).end(e.toString())
-            }
-            break;
-        default:
-            res.setHeader('Allow', ['GET', 'POST'])
-            res.status(405).end(`Method ${req.method} Not Allowed`)
-            break;
+
+                for (const title of body.title) {
+                    await ShowName.create({
+                        title: title.title,
+                        language: title.lang,
+                        show: createdShow.id,
+                        id: randomUUID(),
+                    })
+                }
+
+                for (const release of body.releases) {
+                    const createdRelease = await Release.create({
+                        ...release,
+                        id: randomUUID()
+                    })
+                    await ShowRelease.create({
+                        show: createdShow.id,
+                        release: createdRelease.id,
+                        type: release.type
+                    })
+                }
+                res.status(201).end()
+            })
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        } catch (e: any) {
+            res.status(500).end(e.toString())
+        }
+        break;
+    }
+    default:
+        res.setHeader('Allow', ['GET', 'POST'])
+        res.status(405).end(`Method ${req.method} Not Allowed`)
+        break;
     }
 }

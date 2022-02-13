@@ -18,8 +18,8 @@ export default function Document() {
                 <link rel="icon" type="image/png" href="/favicon.png"/>
             </Head>
             <body>
-            <Main/>
-            <NextScript/>
+                <Main/>
+                <NextScript/>
             </body>
         </Html>
     )

@@ -29,7 +29,7 @@ const Home: NextPage<{ releases: string }> = (props) => {
         <>
             <NewShowDialog open={open} setOpen={setOpen}/>
             <Fab color="primary" aria-label="add" sx={{position: 'absolute', right: 24, bottom: 24}}
-                 onClick={handleClickOpen}>
+                onClick={handleClickOpen}>
                 <AddIcon/>
             </Fab>
         </>
@@ -48,12 +48,12 @@ const Home: NextPage<{ releases: string }> = (props) => {
                     index={value}
                     onChangeIndex={(v) => setValue(v)}
                 >
-                <TabPanel value={value} index={0}>
-                    <Table releases={releases.filter(it => !it.show.isMovie)}/>
-                </TabPanel>
-                <TabPanel value={value} index={1}>
-                    <Table releases={releases.filter(it => it.show.isMovie)}/>
-                </TabPanel>
+                    <TabPanel value={value} index={0}>
+                        <Table releases={releases.filter(it => !it.show.isMovie)}/>
+                    </TabPanel>
+                    <TabPanel value={value} index={1}>
+                        <Table releases={releases.filter(it => it.show.isMovie)}/>
+                    </TabPanel>
                 </SwipeableViews>
             </main>
             {newShowStuff}
@@ -61,6 +61,7 @@ const Home: NextPage<{ releases: string }> = (props) => {
     )
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export async function getServerSideProps(context: GetServerSidePropsContext) {
     const allReleases = await getAllReleases()
     return {

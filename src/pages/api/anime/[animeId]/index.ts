@@ -9,40 +9,41 @@ export default async function handler(
 ) {
     const {animeId: id} = req.query;
     switch (req.method) {
-        case 'DELETE':
-            try {
-                await sequelize.transaction(async () => {
-                    const showReleases = await ShowRelease.findAll({
-                        where: {show: id}
-                    })
-
-                    await Promise.all([
-                        ShowRelease.destroy({
-                            where: {show: id}
-                        }),
-                        Release.destroy({
-                            where: {
-                                [Op.or]: showReleases.map(it => ({id: it.release}))
-                            }
-                        }),
-                        ShowName.destroy({
-                            where: {show: id}
-                        }),
-                        Show.destroy({
-                            where: {id}
-                        })
-                    ])
+    case 'DELETE':
+        try {
+            await sequelize.transaction(async () => {
+                const showReleases = await ShowRelease.findAll({
+                    where: {show: id}
                 })
 
-                res.status(200).end()
-            } catch (e: any) {
-                res.status(500).end(e.toString())
-            }
-            break;
-        default:
-            res.setHeader('Allow', ['DELETE'])
-            res.status(405).end(`Method ${req.method} Not Allowed`)
-            break;
+                await Promise.all([
+                    ShowRelease.destroy({
+                        where: {show: id}
+                    }),
+                    Release.destroy({
+                        where: {
+                            [Op.or]: showReleases.map(it => ({id: it.release}))
+                        }
+                    }),
+                    ShowName.destroy({
+                        where: {show: id}
+                    }),
+                    Show.destroy({
+                        where: {id}
+                    })
+                ])
+            })
+
+            res.status(200).end()
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        } catch (e: any) {
+            res.status(500).end(e.toString())
+        }
+        break;
+    default:
+        res.setHeader('Allow', ['DELETE'])
+        res.status(405).end(`Method ${req.method} Not Allowed`)
+        break;
     }
 
     res.status(500).end()

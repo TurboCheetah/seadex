@@ -16,6 +16,7 @@ export default async function handler(
         res.status(401).end('Authentication required')
         return
     }
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     const isEditor = session.user?.isEditor === true
     console.log(isEditor)
