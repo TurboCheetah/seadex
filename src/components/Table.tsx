@@ -18,6 +18,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import {useSession} from "next-auth/react";
 import {BbtIconButton, NyaaIconButton, ToshIconButton} from "./IconButton";
 import HelpIcon from '@mui/icons-material/Help';
+import SeasonDetailsDialog from "./SeasonDetailsDialog";
 
 // from https://stackoverflow.com/a/47385953
 function groupByKey<T>(list: T[], key: string): { [p: string]: T[] } {
@@ -70,8 +71,10 @@ function TitleTableCell({title}: { title: string }) {
     )
 }
 
-function ReleasesRows(props: { releases: Release[] }) {
+function ReleasesRows(props: { releases: Release[], showTitle: string }) {
     const releases = groupByKey(props.releases, 'title');
+    const [dialogState, setDialogState] = useState<null | { releases: Release[], season: string, showTitle: string }>(null)
+    const [isDialogOpen, setIsDialogOpen] = useState(false)
 
     const displaySeason = (season: string) => {
         const seasonReleases = releases[season]
@@ -81,8 +84,18 @@ function ReleasesRows(props: { releases: Release[] }) {
 
         const bestRelease = seasonReleases.find(it => it.type === 'best');
         const altRelease = seasonReleases.find(it => it.type === 'alternative');
+
+        const showDialog = () => {
+            setDialogState({
+                releases: seasonReleases,
+                showTitle: props.showTitle,
+                season,
+            })
+            setIsDialogOpen(true)
+        }
+
         return (
-            <TableRow hover sx={{cursor: 'pointer'}}>
+            <TableRow hover sx={{cursor: 'pointer'}} onClick={showDialog}>
                 <TableCell align='center'>
                     {season}
                 </TableCell>
@@ -92,16 +105,19 @@ function ReleasesRows(props: { releases: Release[] }) {
         )
     }
     return (
-        <Table size="small" aria-label="season">
-            <TableHead>
-                <TableRow>
-                    <TableCell align='center'/>
-                    <TitleTableCell title="Best"/>
-                    <TitleTableCell title="Alternative"/>
-                </TableRow>
-            </TableHead>
-            {Array.from(Object.keys(releases)).sort().map(displaySeason)}
-        </Table>
+        <>
+            <Table size="small" aria-label="season">
+                <TableHead>
+                    <TableRow>
+                        <TableCell align='center'/>
+                        <TitleTableCell title="Best"/>
+                        <TitleTableCell title="Alternative"/>
+                    </TableRow>
+                </TableHead>
+                {Array.from(Object.keys(releases)).sort().map(displaySeason)}
+            </Table>
+            <SeasonDetailsDialog open={isDialogOpen} setOpen={setIsDialogOpen} {...dialogState} />
+        </>
     )
 }
 
@@ -146,7 +162,7 @@ function Row({show, releases}: RowProps) {
                             <Typography variant="h5" gutterBottom component="div">
                                 Releases
                             </Typography>
-                            <ReleasesRows releases={releases}/>
+                            <ReleasesRows releases={releases} showTitle={show.titles[0].title}/>
                         </Box>
                     </Collapse>
                 </TableCell>
