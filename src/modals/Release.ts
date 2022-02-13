@@ -6,6 +6,7 @@ export default class Release extends Model {
     declare title: string
     declare releaseGroup: string
     declare notes?: string
+    declare comparisons?: string
     declare dualAudio: boolean
     declare nyaaLink?: string
     declare bbtLink?: string
@@ -41,6 +42,10 @@ export const init = (sequelize: Sequelize) => Release.init(
         notes: {
             type: DataTypes.TEXT,
             allowNull: true
+        },
+        comparisons: {
+            type: DataTypes.TEXT,
+            allowNull: true,
         },
         dualAudio: {
             type: DataTypes.BOOLEAN,

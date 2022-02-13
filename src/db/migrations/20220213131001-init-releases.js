@@ -20,6 +20,10 @@ module.exports = {
              type: Sequelize.TEXT,
              allowNull: true
            },
+         comparisons: {
+             type: Sequelize.TEXT,
+             allowNull: true
+           },
            dualAudio: {
              type: Sequelize.BOOLEAN,
              allowNull: false,
