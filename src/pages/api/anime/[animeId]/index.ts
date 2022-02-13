@@ -1,15 +1,13 @@
 import type {NextApiRequest, NextApiResponse} from "next";
-import ShowRelease from "../../../../modals/ShowRelease";
-import Release from "../../../../modals/Release";
+import {Release, Show, ShowName, ShowRelease} from "../../../../modals/";
 import {Op} from "sequelize";
-import Show from "../../../../modals/Show";
 import {sequelize} from "../../../../db";
 
 export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse
 ) {
-    const { animeId: id } = req.query;
+    const {animeId: id} = req.query;
     switch (req.method) {
         case 'DELETE':
             try {
@@ -17,16 +15,23 @@ export default async function handler(
                     const showReleases = await ShowRelease.findAll({
                         where: {show: id}
                     })
-                    console.log('here 1')
-                    await Release.destroy({
-                        where: {
-                            [Op.or]: showReleases.map(it => ({id: it.release}))
-                        }
-                    })
-                    console.log('here 2')
-                    await Show.destroy({
-                        where: {id}
-                    })
+
+                    await Promise.all([
+                        ShowRelease.destroy({
+                            where: {show: id}
+                        }),
+                        Release.destroy({
+                            where: {
+                                [Op.or]: showReleases.map(it => ({id: it.release}))
+                            }
+                        }),
+                        ShowName.destroy({
+                            where: {show: id}
+                        }),
+                        Show.destroy({
+                            where: {id}
+                        })
+                    ])
                 })
 
                 res.status(200).end()

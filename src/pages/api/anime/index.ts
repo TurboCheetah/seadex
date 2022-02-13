@@ -22,7 +22,6 @@ export default async function handler(
     switch (req.method) {
         case 'GET':
             const releases = await getAllReleases()
-            console.log('releases', releases)
             res.json(releases)
             break;
         case 'POST':

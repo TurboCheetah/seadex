@@ -1,26 +1,24 @@
 import type {NextApiRequest, NextApiResponse} from "next";
-import ShowRelease from "../../../../../modals/ShowRelease";
-import Release from "../../../../../modals/Release";
+import {Release, ShowRelease} from "../../../../../modals/";
 import {sequelize} from "../../../../../db";
 
 export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse
 ) {
-    const { releaseId: id } = req.query;
+    const {releaseId: id} = req.query;
     switch (req.method) {
         case 'DELETE':
             try {
                 await sequelize.transaction(async () => {
-                    await Release.destroy({
-                        where: {
-                            id
-                        }
-                    })
-
-                    await ShowRelease.destroy({
-                        where: {show: id}
-                    })
+                    await Promise.all([
+                        Release.destroy({
+                            where: {id}
+                        }),
+                        ShowRelease.destroy({
+                            where: {release: id}
+                        })
+                    ])
                 })
 
                 res.status(200).end()
