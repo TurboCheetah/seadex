@@ -1,8 +1,8 @@
+import {sequelize} from "../../../db";
 import NextAuth from "next-auth"
 import DiscordProvider from "next-auth/providers/discord";
 import SequelizeAdapter, {models} from "@next-auth/sequelize-adapter"
-import {DataTypes} from "sequelize"
-import sequelize from "../../../sequelize";
+import {DataTypes} from "sequelize";
 
 export default NextAuth({
     providers: [
@@ -30,5 +30,6 @@ export default NextAuth({
                 },
             }),
         },
-    }),
+        synchronize: false
+    })
 })

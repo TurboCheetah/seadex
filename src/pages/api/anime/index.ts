@@ -3,13 +3,11 @@ import Show from "../../../modals/Show";
 import Release from "../../../modals/Release";
 import ShowRelease from "../../../modals/ShowRelease";
 import {randomUUID} from "crypto";
-import sequelize from "../../../sequelize";
-import {QueryTypes} from "sequelize";
+import {sequelize} from "../../../db";
 import {getAllReleases, ReleaseList} from "../../../utils/shows";
 import {getSession} from "next-auth/react";
 import ShowName from "../../../modals/ShowName";
 
-// sequelize.sync({force: true})
 interface CreateShowRequest {
     title: { title: string, lang: string }[]
     isMovie: true,
@@ -24,6 +22,7 @@ export default async function handler(
     switch (req.method) {
         case 'GET':
             const releases = await getAllReleases()
+            console.log('releases', releases)
             res.json(releases)
             break;
         case 'POST':

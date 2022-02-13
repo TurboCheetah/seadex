@@ -1,5 +1,4 @@
-import {DataTypes, Model} from "sequelize";
-import sequelize from "../sequelize";
+import {DataTypes, Model, Sequelize} from "sequelize";
 
 
 export default class Release extends Model {
@@ -16,9 +15,16 @@ export default class Release extends Model {
     declare incomplete: boolean
     declare isExclusiveRelease: boolean
     declare isBroken: boolean
+
+    static associate(models: any) {
+        models.ShowRelease.belongsTo(models.Release, {
+            onDelete: 'CASCADE',
+            foreignKey: 'release'
+        })
+    }
 }
 
-Release.init(
+export const init = (sequelize: Sequelize) => Release.init(
     {
         id: {
             type: DataTypes.UUID,
