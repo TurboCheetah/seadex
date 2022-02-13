@@ -1,8 +1,7 @@
-import React, {useState, SyntheticEvent} from 'react';
+import React, {SyntheticEvent} from 'react';
 import Box from '@mui/material/Box';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
-import Typography from "@mui/material/Typography";
 
 
 interface TabPanelProps {
@@ -35,7 +34,7 @@ export default function CenteredTabs({value, setValue}: {value: number, setValue
 
     return (
         <Box sx={{ width: '100%', bgcolor: 'background.paper', height: '48px' }}>
-            <Tabs value={value} onChange={handleChange} centered>
+            <Tabs value={value} onChange={handleChange} centered variant="fullWidth">
                 <Tab label="Shows" />
                 <Tab label="Movies" />
             </Tabs>
