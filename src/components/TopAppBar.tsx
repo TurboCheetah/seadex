@@ -1,4 +1,5 @@
 import * as React from 'react';
+import {useState} from 'react';
 import {alpha, styled} from '@mui/material/styles';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
@@ -13,7 +14,7 @@ import MenuItem from '@mui/material/MenuItem';
 import Avatar from '@mui/material/Avatar';
 import Menu from '@mui/material/Menu';
 import IconButton from '@mui/material/IconButton';
-import {useState} from "react";
+import {useRouter} from "next/router";
 
 const Search = styled('div')(({theme}) => ({
     position: 'relative',
@@ -102,6 +103,10 @@ export default function TopAppBar() {
         </Box>
     );
 
+    const router = useRouter()
+
+    const navigateToHome = () => router.push("/")
+
     return (
         <Box sx={{flexGrow: 1, height: 69}}>
             <AppBar position="static">
@@ -110,7 +115,9 @@ export default function TopAppBar() {
                         variant="h6"
                         noWrap
                         component="div"
-                        sx={{flexGrow: 1, display: {xs: 'none', sm: 'block'}}}
+                        onClick={navigateToHome}
+                        aria-label="navigate to home"
+                        sx={{flexGrow: 1, display: {xs: 'none', sm: 'block'}, cursor: 'pointer'}}
                     >
                         Seadex
                     </Typography>

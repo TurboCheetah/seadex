@@ -1,13 +1,16 @@
 import {DataTypes, Model, Sequelize} from "sequelize";
+import type ShowName from "./ShowName";
 
 export default class Show extends Model {
     declare id: string
     declare isMovie: boolean
+    declare titles: ShowName[] | string[];
 
     static associate(models: any) {
-        models.ShowName.belongsTo(models.Show, {
-            onDelete: 'CASCADE',
-            foreignKey: 'show'
+        Show.hasMany(models.ShowName, {
+            onDelete: 'RESTRICT',
+            foreignKey: 'show',
+            as: 'titles'
         })
         models.ShowRelease.belongsTo(models.Show, {
             onDelete: 'CASCADE',

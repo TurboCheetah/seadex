@@ -18,16 +18,8 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import {useSession} from "next-auth/react";
 import {BbtIconButton, NyaaIconButton, ToshIconButton} from "./IconButton";
 import HelpIcon from '@mui/icons-material/Help';
-import SeasonDetailsDialog from "./SeasonDetailsDialog";
-
-// from https://stackoverflow.com/a/47385953
-function groupByKey<T>(list: T[], key: string): { [p: string]: T[] } {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return list.reduce((hash: any, obj: any) => ({
-        ...hash,
-        [obj[key]]: (hash[obj[key]] || []).concat(obj)
-    }), {});
-}
+import {groupByKey} from "../utils/fns";
+import {useRouter} from "next/router";
 
 export interface RowProps {
     show: Show,
@@ -72,10 +64,9 @@ function TitleTableCell({title}: { title: string }) {
     )
 }
 
-function ReleasesRows(props: { releases: Release[], showTitle: string }) {
+function ReleasesRows(props: { releases: Release[], show: Show }) {
     const releases = groupByKey(props.releases, 'title');
-    const [dialogState, setDialogState] = useState<null | { releases: Release[], season: string, showTitle: string }>(null)
-    const [isDialogOpen, setIsDialogOpen] = useState(false)
+    const router = useRouter()
 
     const displaySeason = (season: string) => {
         const seasonReleases = releases[season]
@@ -86,17 +77,12 @@ function ReleasesRows(props: { releases: Release[], showTitle: string }) {
         const bestRelease = seasonReleases.find(it => it.type === 'best');
         const altRelease = seasonReleases.find(it => it.type === 'alternative');
 
-        const showDialog = () => {
-            setDialogState({
-                releases: seasonReleases,
-                showTitle: props.showTitle,
-                season,
-            })
-            setIsDialogOpen(true)
+        const navigateToAnimePage = async () => {
+            await router.push(`/anime/${props.show.id}?title=${season}`)
         }
 
         return (
-            <TableRow hover sx={{cursor: 'pointer'}} onClick={showDialog}>
+            <TableRow hover sx={{cursor: 'pointer'}} onClick={navigateToAnimePage}>
                 <TableCell align='center'>
                     {season}
                 </TableCell>
@@ -117,7 +103,6 @@ function ReleasesRows(props: { releases: Release[], showTitle: string }) {
                 </TableHead>
                 {Array.from(Object.keys(releases)).sort().map(displaySeason)}
             </Table>
-            <SeasonDetailsDialog open={isDialogOpen} setOpen={setIsDialogOpen} {...dialogState} />
         </>
     )
 }
@@ -125,6 +110,7 @@ function ReleasesRows(props: { releases: Release[], showTitle: string }) {
 function Row({show, releases}: RowProps) {
     const {data: session} = useSession()
     const [open, setOpen] = useState(false);
+    const router = useRouter()
     const bestRelease = releases.find(it => it.type === 'best');
     const altRelease = releases.find(it => it.type === 'alternative');
     const grouped = groupByKey(releases, 'title')
@@ -133,17 +119,20 @@ function Row({show, releases}: RowProps) {
     const releaseIfOne = (release?: Release) => moreThan1 ? <TableCell align='center'/> :
         <DisplayRelease release={release}/>
 
+    const navigateToAnimePage = async () => {
+        await router.push(`/anime/${show.id}`)
+    }
     return (
         <React.Fragment>
-            <TableRow sx={{'& > *': {borderBottom: 'unset'}}} hover>
+            <TableRow sx={{'& > *': {borderBottom: 'unset'}}} hover={!moreThan1} onClick={navigateToAnimePage}>
                 <TableCell>
-                    <IconButton
+                    {moreThan1 && <IconButton
                         aria-label="expand row"
                         size="small"
                         onClick={() => setOpen(!open)}
                     >
                         {open ? <KeyboardArrowUpIcon/> : <KeyboardArrowDownIcon/>}
-                    </IconButton>
+                    </IconButton>}
                 </TableCell>
                 <TableCell component="th" scope="row">
                     {show.titles.map(({title, id}) => (
@@ -163,7 +152,7 @@ function Row({show, releases}: RowProps) {
                             <Typography variant="h5" gutterBottom component="div">
                                 Releases
                             </Typography>
-                            <ReleasesRows releases={releases} showTitle={show.titles[0].title}/>
+                            <ReleasesRows releases={releases} show={show}/>
                         </Box>
                     </Collapse>
                 </TableCell>

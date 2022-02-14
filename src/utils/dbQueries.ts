@@ -1,14 +1,14 @@
-import {Show, Release, ShowName, ShowRelease} from "../modals";
+import {Show, ShowName} from "../modals";
+import type ReleaseType from "../modals/Release";
+import type ShowNameType from "../modals/ShowName";
 import {sequelize} from "../db";
 import {QueryTypes} from "sequelize";
 
-// @ts-ignore
-export type ReleaseWithType = Release & { type: string }
+export type ReleaseWithType = ReleaseType & { type: string }
 export type ShowWithTitle = {
     id: string,
     isMovie: boolean,
-    // @ts-ignore
-    titles: ShowName[]
+    titles: ShowNameType[]
 }
 export type ReleaseList = { show: ShowWithTitle, releases: ReleaseWithType[] }[]
 
@@ -59,9 +59,7 @@ SELECT "shows_releases"."type",
        "release"."isBestVideo"        AS "isBestVideo",
        "release"."incomplete"         AS "incomplete",
        "release"."isExclusiveRelease" AS "isExclusiveRelease",
-       "release"."isBroken"           AS "isBroken",
-       "release"."createdAt"          AS "createdAt",
-       "release"."updatedAt"          AS "updatedAt"
+       "release"."isBroken"           AS "isBroken"
 FROM "shows_releases"
          LEFT JOIN "releases" AS "release" ON "shows_releases"."release" = "release"."id"
 WHERE "shows_releases"."show" = ?`.trim()

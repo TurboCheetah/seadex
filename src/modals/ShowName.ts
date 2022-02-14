@@ -7,9 +7,10 @@ export default class ShowName extends Model {
     declare language: string
 
     static associate(models: any) {
-        models.ShowName.belongsTo(models.Show, {
-            onDelete: 'RESTRICT',
-            foreignKey: 'show'
+        ShowName.belongsTo(models.Show, {
+            onDelete: 'CASCADE',
+            foreignKey: 'show',
+            as: 'titles'
         })
     }
 }
