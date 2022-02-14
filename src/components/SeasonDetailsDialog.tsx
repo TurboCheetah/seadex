@@ -3,7 +3,7 @@ import {useState} from 'react';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogBase from "./DialogBase";
-import {ReleaseWithType as Release} from "../utils/shows";
+import {ReleaseWithType as Release} from "../utils/dbQueries";
 import DoneIcon from '@mui/icons-material/Done';
 import CloseIcon from '@mui/icons-material/Close';
 import List from '@mui/material/List';

@@ -13,7 +13,7 @@ import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-import {ReleaseList, ReleaseWithType as Release, ShowWithTitle as Show} from "../utils/shows";
+import {ReleaseList, ReleaseWithType as Release, ShowWithTitle as Show} from "../utils/dbQueries";
 import DeleteIcon from '@mui/icons-material/Delete';
 import {useSession} from "next-auth/react";
 import {BbtIconButton, NyaaIconButton, ToshIconButton} from "./IconButton";

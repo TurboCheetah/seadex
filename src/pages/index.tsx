@@ -1,7 +1,7 @@
 import type {GetServerSidePropsContext, NextPage} from 'next'
 import Head from 'next/head'
 import Table from "../components/Table";
-import {getAllReleases, ReleaseList} from "../utils/shows";
+import {getAllReleases, ReleaseList} from "../utils/dbQueries";
 import TopAppBar from "../components/TopAppBar";
 import NewShowDialog from "../components/NewShowDialog";
 import Tabs, { TabPanel } from "../components/TabBar";

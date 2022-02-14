@@ -5,10 +5,11 @@ export default class ShowRelease extends Model {
     declare release: string
 
     static associate(models: any) {
-        // models.ShowRelease.belongsTo(models.Release, {
-        //     onDelete: 'RESTRICT',
-        //     foreignKey: 'release'
-        // })
+        models.ShowRelease.belongsTo(models.Release, {
+            onDelete: 'RESTRICT',
+            foreignKey: 'release'
+        })
+
     }
 
 }

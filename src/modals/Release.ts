@@ -18,8 +18,11 @@ export default class Release extends Model {
     declare isBroken: boolean
 
     static associate(models: any) {
-        models.ShowRelease.belongsTo(models.Release, {
-            onDelete: 'CASCADE',
+        // models.ShowRelease.belongsTo(models.Release, {
+        //     onDelete: 'CASCADE',
+        //     foreignKey: 'release'
+        // })
+        models.Release.hasMany(models.ShowRelease, {
             foreignKey: 'release'
         })
     }

@@ -4,7 +4,7 @@ import Release from "../../../modals/Release";
 import ShowRelease from "../../../modals/ShowRelease";
 import {randomUUID} from "crypto";
 import {sequelize} from "../../../db";
-import {getAllReleases, ReleaseList} from "../../../utils/shows";
+import {getAllReleases, ReleaseList} from "../../../utils/dbQueries";
 import {getSession} from "next-auth/react";
 import ShowName from "../../../modals/ShowName";
 
