@@ -1,9 +1,0 @@
-{
-  "development": {
-    "username": "seadex",
-    "password": "password",
-    "database": "seadex",
-    "host": "localhost",
-    "dialect": "postgresql"
-  }
-}
