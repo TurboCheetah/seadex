@@ -23,8 +23,11 @@ RUN apt update -y && \
     rm -rf /var/lib/apt/lists/* && \
     npm ci
 
-# build the web app
+# copy over everything
 COPY . .
 
+# build the next js app
+CMD ["npm", "run", "build"]
+
 # start the node server
-CMD npm run dev
+CMD ["npm", "start"]

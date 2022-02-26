@@ -2,10 +2,11 @@ version: '3.3'
 services:
   seadex:
     build: .
+    image: ghcr.io/ranimepiracy/seadex:latest
     container_name: seadex
     restart: unless-stopped
     ports:
-      - 3000:3000
+      - "3000:3000"
     environment:
       NEXTAUTH_URL: ${NEXTAUTH_URL}
       NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}

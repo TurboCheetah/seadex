@@ -26,18 +26,21 @@ export default async function handler(
         break;
     }
     case 'POST': {
-        /*
-            if (session === null) {
-                res.status(401).end('Authentication required')
-                return
-            }
-            // @ts-ignore
-            const isEditor = session.user?.isEditor === true
-            if (isEditor) {
-                res.status(403).end('Must be editor')
-                return
-            }
-*/
+        if (session === null) {
+            // res.status(401).end('Authentication required')
+            // return
+            console.log('401 - authentication required')
+        }
+
+        // isEditor is added by us and not picked up by tsc
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        const isEditor = session.user?.isEditor === true
+        if (isEditor) {
+            // res.status(403).end('Must be editor')
+            // return
+            console.log('403 - must be editor')
+        }
         const body = req.body as CreateShowRequest
         try {
             await sequelize.transaction(async () => {
