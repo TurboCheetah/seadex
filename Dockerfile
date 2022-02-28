@@ -26,8 +26,5 @@ RUN apt update -y && \
 # copy over everything
 COPY . .
 
-# build the next js app
-CMD ["npm", "run", "build"]
-
-# start the node server
-CMD ["npm", "start"]
+# build and start the Docker app
+CMD ["npm", "run", "docker"]
