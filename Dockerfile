@@ -26,5 +26,8 @@ RUN apt update -y && \
 # copy over everything
 COPY . .
 
-# build and start the Docker app
+# build the next app
+RUN ["npm", "run", "build"]
+
+# start the Docker app
 CMD ["npm", "run", "docker"]

@@ -6,7 +6,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "docker": "npx sequelize db:migrate && next build && next start"
+    "docker": "npx sequelize db:migrate && next start"
   },
   "dependencies": {
     "@emotion/react": "^11.7.1",
