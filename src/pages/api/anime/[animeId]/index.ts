@@ -2,6 +2,7 @@ import type {NextApiRequest, NextApiResponse} from "next";
 import {Release, Show, ShowName, ShowRelease} from "../../../../modals/";
 import {Op} from "sequelize";
 import {sequelize} from "../../../../db";
+import {ensureServerAuth} from "../../../../utils/auth";
 
 export default async function handler(
     req: NextApiRequest,
@@ -10,6 +11,7 @@ export default async function handler(
     const {animeId: id} = req.query;
     switch (req.method) {
     case 'DELETE':
+        if (await ensureServerAuth(req, res)) { return }
         try {
             await sequelize.transaction(async () => {
                 const showReleases = await ShowRelease.findAll({

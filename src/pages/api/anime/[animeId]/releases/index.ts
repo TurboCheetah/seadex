@@ -3,6 +3,7 @@ import {Release, ShowRelease} from "../../../../../modals/";
 import {randomUUID} from "crypto";
 import {getShowsReleases} from "../../../../../utils/dbQueries";
 import {sequelize} from "../../../../../db";
+import {ensureServerAuth} from "../../../../../utils/auth";
 
 export default async function handler(
     req: NextApiRequest,
@@ -25,6 +26,7 @@ export default async function handler(
         break;
     }
     case 'POST': {
+        if (await ensureServerAuth(req, res)) { return }
         const release = req.body;
         await sequelize.transaction(async () => {
             const createdRelease = await Release.create({

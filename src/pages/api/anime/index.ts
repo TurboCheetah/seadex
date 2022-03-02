@@ -5,8 +5,8 @@ import ShowRelease from "../../../modals/ShowRelease";
 import {randomUUID} from "crypto";
 import {sequelize} from "../../../db";
 import {getAllReleases, ReleaseList} from "../../../utils/dbQueries";
-import {getSession} from "next-auth/react";
 import ShowName from "../../../modals/ShowName";
+import {ensureServerAuth} from "../../../utils/auth";
 
 interface CreateShowRequest {
     title: { title: string, lang: string }[]
@@ -18,7 +18,6 @@ export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse<ReleaseList>
 ) {
-    const session = await getSession({req})
     switch (req.method) {
     case 'GET': {
         const releases = await getAllReleases()
@@ -26,21 +25,8 @@ export default async function handler(
         break;
     }
     case 'POST': {
-        if (session === null) {
-            // res.status(401).end('Authentication required')
-            // return
-            console.log('401 - authentication required')
-        }
+        if (await ensureServerAuth(req, res)) { return }
 
-        // isEditor is added by us and not picked up by tsc
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        const isEditor = session.user?.isEditor === true
-        if (isEditor) {
-            // res.status(403).end('Must be editor')
-            // return
-            console.log('403 - must be editor')
-        }
         const body = req.body as CreateShowRequest
         try {
             await sequelize.transaction(async () => {

@@ -1,6 +1,7 @@
 import type {NextApiRequest, NextApiResponse} from "next";
 import {Release, ShowRelease} from "../../../../../modals/";
 import {sequelize} from "../../../../../db";
+import {ensureServerAuth} from "../../../../../utils/auth";
 
 export default async function handler(
     req: NextApiRequest,
@@ -9,6 +10,7 @@ export default async function handler(
     const {releaseId: id} = req.query;
     switch (req.method) {
     case 'DELETE':
+        if (await ensureServerAuth(req, res)) { return }
         try {
             await sequelize.transaction(async () => {
                 await Promise.all([
