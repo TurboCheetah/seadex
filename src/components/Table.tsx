@@ -120,7 +120,9 @@ function Row({show, releases}: RowProps) {
         <DisplayRelease release={release}/>
 
     const navigateToAnimePage = async () => {
-        await router.push(`/anime/${show.id}`)
+        if (!moreThan1) {
+            await router.push(`/anime/${show.id}`)
+        }
     }
     return (
         <React.Fragment>
