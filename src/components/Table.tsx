@@ -126,7 +126,10 @@ function Row({show, releases}: RowProps) {
     }
     return (
         <React.Fragment>
-            <TableRow sx={{'& > *': {borderBottom: 'unset'}}} hover={!moreThan1} onClick={navigateToAnimePage}>
+            <TableRow sx={{
+                '& > *': {borderBottom: 'unset'},
+                cursor: (!moreThan1) ? 'pointer' : 'inherit'
+            }} hover={!moreThan1} onClick={navigateToAnimePage}>
                 <TableCell>
                     {moreThan1 && <IconButton
                         aria-label="expand row"

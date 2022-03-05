@@ -6,7 +6,7 @@ export const IconImage = ({icon}: { icon: string }) => <img src={icon} alt={`vie
 const IconButton = ({icon, href, rest}: { icon: string, href: string, rest?: IconButtonProps }) => (
     <MuiIconButton {...rest}>
         <a href={href} target="_blank" rel="noreferrer">
-            <IconImage icon={icon}/>
+            <IconImage icon={`/${icon}`}/>
         </a>
     </MuiIconButton>
 )

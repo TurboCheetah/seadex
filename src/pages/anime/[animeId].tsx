@@ -22,10 +22,9 @@ import {IconImage} from "../../components/IconButton";
 import Box from "@mui/material/Box";
 import List from "@mui/material/List";
 import DownloadIcon from "@mui/icons-material/Download";
-import {ExpandLess} from "@mui/icons-material";
-import ExpandMore from "@mui/icons-material/ExpandMore";
-import Collapse from "@mui/material/Collapse";
+import NotesIcon from "@mui/icons-material/Notes";
 import {useTheme} from "@mui/material/styles";
+import NestedList from "../../components/NestedList";
 
 
 const Boolean = ({value, title}: { value: boolean, title: string }) => {
@@ -40,7 +39,7 @@ const Boolean = ({value, title}: { value: boolean, title: string }) => {
 }
 
 const ReleaseLinkListItem = ({link, site}: { link?: string, site: string }) => {
-    return link ? <ListItemButton sx={{pl: 4}} component="a" href={link} target="_blank">
+    return link ? <ListItemButton sx={{pl: 4}} component="a" href={`/${link}`} target="_blank">
         <ListItemIcon>
             <IconImage icon={`${site.toLowerCase()}.webp`}/>
         </ListItemIcon>
@@ -49,12 +48,6 @@ const ReleaseLinkListItem = ({link, site}: { link?: string, site: string }) => {
 }
 
 function DisplayRelease({release}: { release: Release }) {
-    const [showingDownloads, setShowingDownloads] = useState(false);
-
-    const showDownloads = () => {
-        setShowingDownloads(!showingDownloads);
-    };
-
     return <Box>
         <Typography component="h3" variant="h5">
             {release.releaseGroup}
@@ -67,21 +60,17 @@ function DisplayRelease({release}: { release: Release }) {
             <Boolean value={release.incomplete} title="Incomplete"/>
             <Boolean value={release.isExclusiveRelease} title="Exclusive Release"/>
             <Boolean value={release.isBroken} title="Broken"/>
+            {release.notes && <NestedList icon={NotesIcon} text="Notes">
+                <Typography sx={{pl: 4, pr: 2, py: 1}}>{release.notes}</Typography>
+            </NestedList>}
 
-            <ListItemButton onClick={showDownloads}>
-                <ListItemIcon>
-                    <DownloadIcon/>
-                </ListItemIcon>
-                <ListItemText primary="Downloads"/>
-                {showingDownloads ? <ExpandLess/> : <ExpandMore/>}
-            </ListItemButton>
-            <Collapse in={showingDownloads} timeout="auto" unmountOnExit>
+            <NestedList icon={DownloadIcon} text="Downloads">
                 <List component="div" disablePadding>
                     <ReleaseLinkListItem link={release.nyaaLink} site="Nyaa"/>
                     <ReleaseLinkListItem link={release.bbtLink} site="BBT"/>
                     <ReleaseLinkListItem link={release.toshLink} site="Tosh"/>
                 </List>
-            </Collapse>
+            </NestedList>
         </List>
     </Box>;
 }
