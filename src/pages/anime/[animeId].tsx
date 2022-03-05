@@ -5,8 +5,6 @@ import type ShowType from "../../modals/Show";
 import type ShowNameType from "../../modals/ShowName";
 import Head from "next/head";
 import TopAppBar from "../../components/TopAppBar";
-import * as React from "react";
-import {useState} from "react";
 import {useLanguage} from "../../utils/hooks";
 import {groupByKey} from "../../utils/fns";
 import {Theme, Typography} from "@mui/material";
@@ -23,6 +21,7 @@ import Box from "@mui/material/Box";
 import List from "@mui/material/List";
 import DownloadIcon from "@mui/icons-material/Download";
 import NotesIcon from "@mui/icons-material/Notes";
+import CompareIcon from '@mui/icons-material/Compare';
 import {useTheme} from "@mui/material/styles";
 import NestedList from "../../components/NestedList";
 
@@ -39,9 +38,9 @@ const Boolean = ({value, title}: { value: boolean, title: string }) => {
 }
 
 const ReleaseLinkListItem = ({link, site}: { link?: string, site: string }) => {
-    return link ? <ListItemButton sx={{pl: 4}} component="a" href={`/${link}`} target="_blank">
+    return link ? <ListItemButton sx={{pl: 4}} component="a" href={`${link}`} target="_blank">
         <ListItemIcon>
-            <IconImage icon={`${site.toLowerCase()}.webp`}/>
+            <IconImage icon={`/${site.toLowerCase()}.webp`}/>
         </ListItemIcon>
         <ListItemText primary={site}/>
     </ListItemButton> : <></>
@@ -62,6 +61,9 @@ function DisplayRelease({release}: { release: Release }) {
             <Boolean value={release.isBroken} title="Broken"/>
             {release.notes && <NestedList icon={NotesIcon} text="Notes">
                 <Typography sx={{pl: 4, pr: 2, py: 1}}>{release.notes}</Typography>
+            </NestedList>}
+            {release.comparisons && <NestedList icon={CompareIcon} text="Comparisons">
+                <Typography sx={{pl: 4, pr: 2, py: 1}}>{release.comparisons}</Typography>
             </NestedList>}
 
             <NestedList icon={DownloadIcon} text="Downloads">

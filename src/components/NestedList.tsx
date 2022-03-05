@@ -5,10 +5,10 @@ import {PropsWithChildren, useState} from "react";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import * as React from "react";
-import type {Icon} from "@mui/material";
 
 type Props = PropsWithChildren<{
-    icon: typeof Icon,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    icon: any,
     text: string
 }>
 
