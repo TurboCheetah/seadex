@@ -39,3 +39,7 @@ yarn-error.log*
 
 # seadex
 config/*
+
+# migration
+seadex_data.json
+seadex_schema.json
