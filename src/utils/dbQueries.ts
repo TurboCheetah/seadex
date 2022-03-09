@@ -10,6 +10,7 @@ export type ShowWithTitle = {
     isMovie: boolean,
     titles: ShowNameType[]
 }
+export type ShowRelease = { show: ShowWithTitle, releases: ReleaseWithType[] }
 export type ReleaseList = { show: ShowWithTitle, releases: ReleaseWithType[] }[]
 
 export const getAllReleases = async (): Promise<ReleaseList> => {

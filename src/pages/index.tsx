@@ -10,7 +10,7 @@ import AddIcon from '@mui/icons-material/Add';
 import * as React from "react";
 import {useSession} from "next-auth/react";
 import {useState} from "react";
-import SwipeableViews from 'react-swipeable-views';
+// import SwipeableViews from 'react-swipeable-views';
 import {useTheme} from "@mui/material/styles";
 
 const Home: NextPage<{ releases: string }> = (props) => {
@@ -42,8 +42,8 @@ const Home: NextPage<{ releases: string }> = (props) => {
             </Head>
             <TopAppBar/>
             <main>
-                <Tabs value={value} setValue={setValue} />
-                <SwipeableViews
+                {/*<Tabs value={value} setValue={setValue} />*/}
+                {/*<SwipeableViews
                     axis={theme.direction === 'rtl' ? 'x-reverse' : 'x'}
                     index={value}
                     onChangeIndex={(v) => setValue(v)}
@@ -54,7 +54,8 @@ const Home: NextPage<{ releases: string }> = (props) => {
                     <TabPanel value={value} index={1}>
                         <Table releases={releases.filter(it => it.show.isMovie)}/>
                     </TabPanel>
-                </SwipeableViews>
+                </SwipeableViews>*/}
+                <Table releases={releases}/>
             </main>
             {newShowStuff}
         </>
