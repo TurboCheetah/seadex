@@ -40,6 +40,9 @@ yarn-error.log*
 # seadex
 config/*
 
+# visual studio code
+.vscode/
+
 # migration
 seadex_data.json
 seadex_schema.json
