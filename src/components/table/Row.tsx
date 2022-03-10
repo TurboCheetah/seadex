@@ -1,30 +1,24 @@
-import React, {useState} from 'react';
-import Paper from '@mui/material/Paper';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Box from '@mui/material/Box';
-import Collapse from '@mui/material/Collapse';
-import Typography from '@mui/material/Typography';
-import IconButton from '@mui/material/IconButton';
-import Tooltip from '@mui/material/Tooltip';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-import {ReleaseList, ReleaseWithType as Release, ShowWithTitle as Show} from "../utils/dbQueries";
-import DeleteIcon from '@mui/icons-material/Delete';
 import {useSession} from "next-auth/react";
-import {BbtIconButton, NyaaIconButton, ToshIconButton} from "./IconButton";
-import HelpIcon from '@mui/icons-material/Help';
-import {groupByKey} from "../utils/fns";
+import React, {useState} from "react";
 import {useRouter} from "next/router";
-
-export interface RowProps {
-    show: Show,
-    releases: Release[]
-}
+import {groupByKey} from "../../utils/fns";
+import {ReleaseWithType as Release, ShowWithTitle as Show} from "../../utils/dbQueries";
+import TableCell from "@mui/material/TableCell";
+import TableRow from "@mui/material/TableRow";
+import IconButton from "@mui/material/IconButton";
+import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import DeleteIcon from "@mui/icons-material/Delete";
+import Collapse from "@mui/material/Collapse";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+import {BbtIconButton, NyaaIconButton, ToshIconButton} from "../IconButton";
+import Tooltip from "@mui/material/Tooltip";
+import HelpIcon from "@mui/icons-material/Help";
+import Table from "@mui/material/Table";
+import TableHead from "@mui/material/TableHead";
+import {Boolean} from "../Boolean";
+import {useLanguage} from "../../utils/hooks";
 
 const DisplayRelease = ({release}: { release?: Release }) => {
     const children = release ? (<>
@@ -107,14 +101,22 @@ function ReleasesRows(props: { releases: Release[], show: Show }) {
     )
 }
 
-function Row({show, releases}: RowProps) {
+export interface RowProps {
+    show: Show,
+    releases: Release[]
+}
+
+export default function Row({show, releases}: RowProps) {
     const {data: session} = useSession()
     const [open, setOpen] = useState(false);
     const router = useRouter()
+    const lang = useLanguage()
+
     const bestRelease = releases.find(it => it.type === 'best');
     const altRelease = releases.find(it => it.type === 'alternative');
     const grouped = groupByKey(releases, 'title')
     const moreThan1 = Object.keys(grouped).length > 1
+    const title = show.titles.find(it => it.language === lang)?.title
 
     const releaseIfOne = (release?: Release) => moreThan1 ? <TableCell align='center'/> :
         <DisplayRelease release={release}/>
@@ -124,8 +126,9 @@ function Row({show, releases}: RowProps) {
             await router.push(`/anime/${show.id}`)
         }
     }
+    console.log('isMovie', show.isMovie)
     return (
-        <React.Fragment>
+        <>
             <TableRow sx={{
                 '& > *': {borderBottom: 'unset'},
                 cursor: (!moreThan1) ? 'pointer' : 'inherit'
@@ -139,14 +142,15 @@ function Row({show, releases}: RowProps) {
                         {open ? <KeyboardArrowUpIcon/> : <KeyboardArrowDownIcon/>}
                     </IconButton>}
                 </TableCell>
-                <TableCell component="th" scope="row">
-                    {show.titles.map(({title, id}) => (
-                        <p key={id}>{title}</p>
-                    ))}
+                <TableCell scope="row">
+                    {title}
+                </TableCell>
+                <TableCell align='center'>
+                    <Boolean value={show.isMovie} />
                 </TableCell>
                 {releaseIfOne(bestRelease)}
                 {releaseIfOne(altRelease)}
-                {session && <TableCell component="th" scope="row">
+                {session && <TableCell scope="row">
                     <IconButton><DeleteIcon/></IconButton>
                 </TableCell>}
             </TableRow>
@@ -162,34 +166,6 @@ function Row({show, releases}: RowProps) {
                     </Collapse>
                 </TableCell>
             </TableRow>
-        </React.Fragment>
-    );
-}
-
-export interface TableProps {
-    releases: ReleaseList
-}
-
-export default function ShowsListTable({releases}: TableProps) {
-    const {data: session} = useSession()
-    return (
-        <Paper sx={{width: '100%', overflow: 'hidden'}}>
-            <TableContainer sx={{maxHeight: 'calc(100vh - (69px + 48px))'}}>
-                <Table stickyHeader aria-label="anime list table">
-                    <TableHead>
-                        <TableRow>
-                            <TableCell/>
-                            <TableCell>Title</TableCell>
-                            <TitleTableCell title="Best"/>
-                            <TitleTableCell title="Alternative"/>
-                            {session && <TableCell>Actions</TableCell>}
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {releases.map(({show, releases}) => <Row show={show} releases={releases} key={show.id}/>)}
-                    </TableBody>
-                </Table>
-            </TableContainer>
-        </Paper>
+        </>
     );
 }
