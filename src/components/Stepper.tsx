@@ -5,14 +5,14 @@ import MuiStep from '@mui/material/Step';
 import StepLabel from '@mui/material/StepLabel';
 import Button from '@mui/material/Button';
 
-export interface StepperButtonProps {
+export interface StepperButtonProps<T> {
     activeStep: number
-    handleNext: () => void
+    handleNext: (val?: T) => void
     handleBack: () => void
     nextButtonText?: string
 }
 
-export function StepperButtons(props: StepperButtonProps) {
+export function StepperButtons<T>(props: StepperButtonProps<T>) {
     return (
         <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
             <Button
@@ -24,7 +24,7 @@ export function StepperButtons(props: StepperButtonProps) {
                 Back
             </Button>
             <Box sx={{ flex: '1 1 auto' }} />
-            <Button onClick={props.handleNext}>
+            <Button onClick={() => props.handleNext()}>
                 {props.nextButtonText ?? 'Next'}
             </Button>
         </Box>
