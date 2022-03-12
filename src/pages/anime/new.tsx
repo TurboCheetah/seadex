@@ -23,7 +23,6 @@ import {Add as AddIcon, Done as DoneIcon, ExpandMore as ExpandMoreIcon} from "@m
 import Head from "next/head";
 import Image from "next/image";
 import type {NextPage} from "next";
-import Release from "../../modals/Release";
 
 const flex = (direction: 'row' | 'column' = 'row') => ({
     display: 'flex',
@@ -57,7 +56,7 @@ interface Title {
     language: string
 }
 
-function TitleForm(props: StepperButtonProps<Title[]>) {
+function TitleForm(props: StepperButtonProps<Title>) {
     const [inputs, setInputs] = useState([1])
     const formRef = useRef<HTMLFormElement | null>(null)
     const addInput = () => {
@@ -117,7 +116,7 @@ const TwoColumnGrid = styled(Box)(({theme}) => ({
 }))
 
 // eslint-disable-next-line react/display-name
-const LinkField = forwardRef((props: TextFieldProps & { site: string }, ref) => {
+const LinkField = (props: TextFieldProps & { site: string }) => {
     const site = props.site
 
     return (
@@ -135,9 +134,12 @@ const LinkField = forwardRef((props: TextFieldProps & { site: string }, ref) => 
 
         />
     )
-})
+}
 
-function ReleasesForm(props: StepperButtonProps<object[]>) {
+// TODO use proper type instead of FormDataEntryValue | null
+type Release = { [k: string]: FormDataEntryValue | null };
+function ReleasesForm(props: StepperButtonProps<Release>) {
+
     const [expanded, setExpanded] = useState<string | false>(false);
     const [releases, setReleases] = useState<Release[]>([])
     const formRef = useRef<HTMLFormElement | null>(null)
@@ -167,7 +169,7 @@ function ReleasesForm(props: StepperButtonProps<object[]>) {
             'incomplete',
             'isExclusiveRelease',
         ]
-        const release = {}
+        const release: Release = {}
         fields.forEach(f => {
             release[f] = formData.get(f)
         })
@@ -181,8 +183,8 @@ function ReleasesForm(props: StepperButtonProps<object[]>) {
 
     return (
         <>
-            {releases.map(release => (
-                <Accordion expanded={expanded === release.id} key={release.id} onChange={handleChange(release.id)}>
+            {releases.map((release, i) => (
+                <Accordion expanded={expanded === `${release.title}.${i}`} key={`${release.title}.${i}`} onChange={handleChange(`${release.title}.${i}`)}>
                     <AccordionSummary
                         expandIcon={<ExpandMoreIcon/>}
                         aria-controls="panel1bh-content"

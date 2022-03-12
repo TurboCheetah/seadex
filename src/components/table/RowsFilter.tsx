@@ -7,9 +7,17 @@ import {createContext, PropsWithChildren, useContext} from "react";
 import Tooltip from '@mui/material/Tooltip';
 
 
-export const FilterContext = createContext(Filter)
+export enum Filter {
+    All,
+    ShowsOnly,
+    MoviesOnly
+}
 
-export function FilterContextProvider(props: PropsWithChildren<never>) {
+
+const defaultValue: { filter: Filter, setFilter?: (f: Filter) => void } = {filter: Filter.All}
+export const FilterContext = createContext(defaultValue)
+
+export function FilterContextProvider(props: PropsWithChildren<unknown>) {
     const [filter, setFilter] = React.useState(Filter.All);
 
     return (
@@ -20,12 +28,6 @@ export function FilterContextProvider(props: PropsWithChildren<never>) {
 }
 
 export const useFilter = () => useContext(FilterContext)
-
-export enum Filter {
-    All,
-    ShowsOnly,
-    MoviesOnly
-}
 
 const options = [
     'All',
@@ -42,7 +44,7 @@ export default function RowsFilter() {
     };
 
     const handleMenuItemClick = (event: React.MouseEvent<HTMLElement>, index: number) => {
-        setSelectedIndex(index);
+        setSelectedIndex && setSelectedIndex(index);
         setAnchorEl(null);
     };
 
