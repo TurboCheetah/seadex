@@ -7,3 +7,7 @@ export function groupByKey<T>(list: T[], key: string): { [p: string]: T[] } {
         [obj[key]]: (hash[obj[key]] || []).concat(obj)
     }), {});
 }
+
+export function zip<T, K>(a: T[], b: K[]): [T, K][] {
+    return a.map((k, i) => [k, b[i]]);
+}

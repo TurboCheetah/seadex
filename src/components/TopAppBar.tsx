@@ -12,6 +12,7 @@ import Avatar from '@mui/material/Avatar';
 import Menu from '@mui/material/Menu';
 import IconButton from '@mui/material/IconButton';
 import {useRouter} from "next/router";
+import {topBarHeight} from "../utils/constants";
 
 export default function TopAppBar() {
     const {data: session} = useSession()
@@ -63,7 +64,7 @@ export default function TopAppBar() {
     const navigateToHome = () => router.push("/")
 
     return (
-        <Box sx={{flexGrow: 1, height: 69}}>
+        <Box sx={{flexGrow: 1, height: topBarHeight}}>
             <AppBar position="static">
                 <Toolbar>
                     <Typography

@@ -1,4 +1,4 @@
-import React, {forwardRef, useRef, useState} from 'react';
+import React, {forwardRef, useCallback, useEffect, useRef, useState} from 'react';
 import {
     Accordion,
     AccordionDetails,
@@ -12,6 +12,7 @@ import {
     FormGroup,
     Icon,
     InputAdornment,
+    LinearProgress,
     styled,
     TextField,
     Typography
@@ -22,33 +23,49 @@ import Stepper, {StepperButtonProps, StepperButtons} from "../../components/Step
 import {Add as AddIcon, Done as DoneIcon, ExpandMore as ExpandMoreIcon} from "@mui/icons-material";
 import Head from "next/head";
 import Image from "next/image";
+import {useRouter} from "next/router";
 import type {NextPage} from "next";
+import ReleaseDetailsList from "../../components/ReleaseDetailsList";
+import {ReleaseWithType as Release} from "../../utils/dbQueries";
+import {zip} from "../../utils/fns";
+import {Paper} from "@mui/material/";
+import {allTheHeight} from "../../utils/constants";
 
-const flex = (direction: 'row' | 'column' = 'row') => ({
-    display: 'flex',
-    flexDirection: direction,
-})
+type Direction = 'row' | 'column';
 
+const flex = (directionSmall: Direction = 'column', direction: Direction = 'row') => {
 
-const StyledForm = styled(Box)(({theme}) => ({
-    ...flex('column'),
-    margin: 'auto',
-    width: 'fit-content',
-    gap: theme.spacing(3),
-    padding: theme.spacing(3),
-}))
+    return {
+        display: 'flex',
+        flexDirection: {
+            xs: directionSmall,
+            md: direction,
+        }
+    }
+}
 
 // eslint-disable-next-line react/display-name
 const Form = forwardRef((props: BoxProps, ref) => {
-    return (<StyledForm {...props} component='form' ref={ref}>{props.children}</StyledForm>)
+    return (
+        <Box {...props}
+            component='form'
+            ref={ref}
+            sx={{
+                ...flex('column'),
+                margin: 'auto',
+                width: 'fit-content',
+                gap: 3,
+                padding: 3,
+                ...(props.sx)
+            }}
+        >
+            {props.children}
+        </Box>
+    )
 })
 
 const availableLanguages = {
     'English': 'en', 'Romanji': 'romanji'
-}
-
-function zip<T, K>(a: T[], b: K[]): [T, K][] {
-    return a.map((k, i) => [k, b[i]]);
 }
 
 interface Title {
@@ -56,7 +73,9 @@ interface Title {
     language: string
 }
 
-function TitleForm(props: StepperButtonProps<Title>) {
+type TitleFormOutput = { titles: Title[], isMovie: boolean }
+
+function TitleForm(props: StepperButtonProps<TitleFormOutput>) {
     const [inputs, setInputs] = useState([1])
     const formRef = useRef<HTMLFormElement | null>(null)
     const addInput = () => {
@@ -70,9 +89,13 @@ function TitleForm(props: StepperButtonProps<Title>) {
         const formGroup = new FormData(formRef.current)
         const titles = formGroup.getAll('title')
         const languages = formGroup.getAll('lang')
+        const isMovie = formGroup.get('isMovie')
         const data = zip(titles, languages).map(([title, language]) =>
-            ({title: title.toString(), language: language.toString()}))
-        props.handleNext(data)
+            ({
+                title: title.toString(),
+                language: language.toString(),
+            }))
+        props.handleNext({titles: data, isMovie: isMovie === 'on'})
     }
     return (
         <>
@@ -98,6 +121,9 @@ function TitleForm(props: StepperButtonProps<Title>) {
                         />
                     </Box>
                 ))}
+                <FormGroup sx={{alignSelf: 'center'}}>
+                    <FormControlLabel control={<Checkbox name='isMovie'/>} label="Movie"/>
+                </FormGroup>
                 <Button onClick={addInput}>
                     <AddIcon/> Add another title
                 </Button>
@@ -136,18 +162,21 @@ const LinkField = (props: TextFieldProps & { site: string }) => {
     )
 }
 
-// TODO use proper type instead of FormDataEntryValue | null
-type Release = { [k: string]: FormDataEntryValue | null };
-function ReleasesForm(props: StepperButtonProps<Release>) {
+function ReleasesForm(props: StepperButtonProps<Release[]>) {
 
     const [expanded, setExpanded] = useState<string | false>(false);
     const [releases, setReleases] = useState<Release[]>([])
+    const [formAltered, setFormAltered] = useState<boolean>(false);
     const formRef = useRef<HTMLFormElement | null>(null)
 
     const handleChange =
         (panel: string) => (event: React.SyntheticEvent, isExpanded: boolean) => {
             setExpanded(isExpanded ? panel : false);
         };
+
+    const handleFormChange = () => {
+        setFormAltered(true)
+    }
 
     const addRelease = () => {
         if (formRef.current === null) {
@@ -157,6 +186,7 @@ function ReleasesForm(props: StepperButtonProps<Release>) {
         const formData = new FormData(formRef.current)
         const fields = [
             'title',
+            'type',
             'releaseGroup',
             'notes',
             'comparisons',
@@ -169,16 +199,35 @@ function ReleasesForm(props: StepperButtonProps<Release>) {
             'incomplete',
             'isExclusiveRelease',
         ]
-        const release: Release = {}
-        fields.forEach(f => {
-            release[f] = formData.get(f)
+        const release: { [k: string]: string | boolean | undefined } = {}
+        fields.forEach((field: string) => {
+            const data = formData.get(field);
+            const boolFields = ['dualAudio', 'isRelease', 'isBestVideo', 'incomplete', 'isExclusiveRelease']
+            if (boolFields.includes(field)) {
+                release[field] = data === 'on' // 'on' is the value when checkbox is ticked
+            } else {
+                if (data === null) {
+                    throw Error(`${field} in release form data was unexpectedly null`)
+                }
+
+                release[field] = data.toString()
+            }
         })
-        setReleases(r => [...r, release])
+        // we just set the properties above, it is a release
+        setReleases(r => [...r, release as unknown as Release])
         formRef.current?.reset()
+        setFormAltered(false)
     }
 
     const handleNext = () => {
-        props.handleNext(releases)
+        if (formAltered) {
+            const shouldContinue = confirm('You have made changes to form but have not added the release. Are you sure you want to continue without saving changes?')
+            if (shouldContinue) {
+                props.handleNext(releases)
+            }
+        } else {
+            props.handleNext(releases)
+        }
     }
 
     return (
@@ -191,40 +240,41 @@ function ReleasesForm(props: StepperButtonProps<Release>) {
                         id="panel1bh-header"
                     >
                         <Typography sx={{width: '33%', flexShrink: 0}}>
-                            General settings
+                            {release.title}
                         </Typography>
-                        <Typography sx={{color: 'text.secondary'}}>I am an accordion</Typography>
+                        <Typography sx={{color: 'text.secondary'}}>{release.releaseGroup}</Typography>
                     </AccordionSummary>
                     <AccordionDetails>
-                        <Typography>
-                            Nulla facilisi. Phasellus sollicitudin nulla et quam mattis feugiat.
-                            Aliquam eget maximus est, id dignissim quam.
-                        </Typography>
+                        <ReleaseDetailsList release={release} />
                     </AccordionDetails>
                 </Accordion>
             ))}
-            <Form ref={formRef}>
-                <TwoColumnGrid sx={{gap: 2}}>
-                    <TextField
-                        autoFocus
-                        label="Title"
-                        name='title'
-                        helperText='e.g. S1'
-                        fullWidth
-                        required
-                    />
-
-                    <TextField
-                        autoFocus
-                        label="Release Group"
-                        name='releaseGroup'
-                        fullWidth
-                        required
-                    />
-                </TwoColumnGrid>
-
+            <Form ref={formRef} onChange={handleFormChange}>
                 <TextField
                     autoFocus
+                    label="Title"
+                    name='title'
+                    helperText='e.g. S1'
+                    fullWidth
+                    required
+                />
+
+                <TextField
+                    label="Release Group"
+                    name='releaseGroup'
+                    fullWidth
+                    required
+                />
+
+                <Autocomplete
+                    disablePortal
+                    fullWidth
+                    options={['Best', 'Alternate']}
+                    renderInput={(params) => <TextField {...params} name='type' required label="Type"/>}
+                />
+
+
+                <TextField
                     label="Notes"
                     name='notes'
                     fullWidth
@@ -232,7 +282,6 @@ function ReleasesForm(props: StepperButtonProps<Release>) {
                 />
 
                 <TextField
-                    autoFocus
                     label="Comparisons"
                     name='comparisons'
                     fullWidth
@@ -278,9 +327,25 @@ function ReleasesForm(props: StepperButtonProps<Release>) {
     )
 }
 
+function StepperFinished({titles, releases}: {titles: TitleFormOutput, releases: Release[]}) {
+    const router = useRouter()
+    const save = useCallback(async (titles, releases) => {
+        console.log({titles, releases})
+        const id = 'uuid'
+        await router.push(`/anime/${id}`)
+    }, [router])
+
+    useEffect(() => {
+        save(titles, releases).then()
+    }, [titles, releases, save])
+
+    return <LinearProgress />;
+}
+
 const NewPage: NextPage = () => {
-    const [titles, setTitles] = useState<Title[]>([])
-    const [activeStep, setActiveStep] = React.useState(0);
+    const [titles, setTitles] = useState<TitleFormOutput>()
+    const [releases, setReleases] = useState<Release[]>([])
+    const [activeStep, setActiveStep] = useState(0);
 
     const handleNext = () => {
         setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -291,16 +356,17 @@ const NewPage: NextPage = () => {
     };
 
 
-    const goToReleases = (titles: Title[]) => {
+    const goToReleases = (titles: TitleFormOutput) => {
         setTitles(titles)
         handleNext()
     }
 
-    const finish = (releases: object[]) => {
-        console.log(releases)
+    const finish = (releases: Release[]) => {
+        setReleases(releases)
         handleNext()
     }
-    console.log(titles)
+
+
     const steps = [
         {
             label: 'Show titles',
@@ -322,8 +388,20 @@ const NewPage: NextPage = () => {
                 <meta name="description" content="A Certain Smoke's Index"/>
             </Head>
             <TopAppBar/>
-            <Box component='main'>
-                <Stepper steps={steps} finished={<>Yo mf, we done</>} activeStep={activeStep}/>
+            <Box component='main' sx={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                height: activeStep === 0 ? allTheHeight : 'auto',
+                my: 2,
+            }}>
+                <Paper sx={{
+                    width: { xs: '100%', md: '75%', lg: '50%' },
+                    p: 2,
+                    m: 2,
+                }}>
+                    <Stepper steps={steps} finished={titles && <StepperFinished titles={titles} releases={releases} />} activeStep={activeStep}/>
+                </Paper>
             </Box>
         </>
     );

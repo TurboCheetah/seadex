@@ -10,70 +10,16 @@ import {groupByKey} from "../../utils/fns";
 import {Theme, Typography} from "@mui/material";
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
-import ListItem from "@mui/material/ListItem";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import DoneIcon from "@mui/icons-material/Done";
-import CloseIcon from "@mui/icons-material/Close";
-import ListItemText from "@mui/material/ListItemText";
-import ListItemButton from "@mui/material/ListItemButton";
-import {IconImage} from "../../components/IconButton";
 import Box from "@mui/material/Box";
-import List from "@mui/material/List";
-import DownloadIcon from "@mui/icons-material/Download";
-import NotesIcon from "@mui/icons-material/Notes";
-import CompareIcon from '@mui/icons-material/Compare';
 import {useTheme} from "@mui/material/styles";
-import NestedList from "../../components/NestedList";
-
-
-const Boolean = ({value, title}: { value: boolean, title: string }) => {
-    return (
-        <ListItem>
-            <ListItemIcon>
-                {value ? <DoneIcon/> : <CloseIcon/>}
-            </ListItemIcon>
-            <ListItemText primary={title}/>
-        </ListItem>
-    )
-}
-
-const ReleaseLinkListItem = ({link, site}: { link?: string, site: string }) => {
-    return link ? <ListItemButton sx={{pl: 4}} component="a" href={`${link}`} target="_blank">
-        <ListItemIcon>
-            <IconImage icon={`/${site.toLowerCase()}.webp`}/>
-        </ListItemIcon>
-        <ListItemText primary={site}/>
-    </ListItemButton> : <></>
-}
+import ReleaseDetailsList from "../../components/ReleaseDetailsList";
 
 function DisplayRelease({release}: { release: Release }) {
     return <Box>
         <Typography component="h3" variant="h5">
             {release.releaseGroup}
         </Typography>
-        <List>
-            <Boolean value={release.type === 'best'} title="Best release"/>
-            <Boolean value={release.dualAudio} title="Dual audio"/>
-            <Boolean value={!release.isRelease} title="Not a release"/>
-            <Boolean value={release.isBestVideo} title="Best video"/>
-            <Boolean value={release.incomplete} title="Incomplete"/>
-            <Boolean value={release.isExclusiveRelease} title="Exclusive Release"/>
-            <Boolean value={release.isBroken} title="Broken"/>
-            {release.notes && <NestedList icon={NotesIcon} text="Notes">
-                <Typography sx={{pl: 4, pr: 2, py: 1}}>{release.notes}</Typography>
-            </NestedList>}
-            {release.comparisons && <NestedList icon={CompareIcon} text="Comparisons">
-                <Typography sx={{pl: 4, pr: 2, py: 1}}>{release.comparisons}</Typography>
-            </NestedList>}
-
-            <NestedList icon={DownloadIcon} text="Downloads">
-                <List component="div" disablePadding>
-                    <ReleaseLinkListItem link={release.nyaaLink} site="Nyaa"/>
-                    <ReleaseLinkListItem link={release.bbtLink} site="BBT"/>
-                    <ReleaseLinkListItem link={release.toshLink} site="Tosh"/>
-                </List>
-            </NestedList>
-        </List>
+        <ReleaseDetailsList release={release}/>
     </Box>;
 }
 
@@ -151,11 +97,9 @@ export default function Page(props: Props) {
 
             if (left > right) {
                 return 1
-            }
-            else if (left < right) {
+            } else if (left < right) {
                 return -1
-            }
-            else {
+            } else {
                 return 0
             }
         })
