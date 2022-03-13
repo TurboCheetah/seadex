@@ -5,13 +5,12 @@ import Fab from '@mui/material/Fab'
 import AddIcon from '@mui/icons-material/Add'
 import React from 'react'
 import { useSession } from 'next-auth/react'
-import EnhancedTable from '../components/table/EnhancedTableHead'
+import EnhancedTable from '../components/table/Table'
 import { useRouter } from 'next/router'
 
 const Home: NextPage<{ releases: string }> = (props) => {
     const { data: session } = useSession()
     const router = useRouter()
-
     const handleClickOpen = async () => {
         await router.push('/anime/new')
     }

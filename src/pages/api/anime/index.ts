@@ -9,14 +9,14 @@ import ShowName from '../../../modals/ShowName'
 import { ensureServerAuth } from '../../../utils/auth'
 
 interface CreateShowRequest {
-    title: { title: string; lang: string }[]
+    titles: { title: string; language: string }[]
     isMovie: true
     releases: [Release & { type: string }]
 }
 
 export default async function handler(
     req: NextApiRequest,
-    res: NextApiResponse<ReleaseList>
+    res: NextApiResponse<ReleaseList | { id: string }>
 ) {
     switch (req.method) {
     case 'GET': {
@@ -37,10 +37,10 @@ export default async function handler(
                     isMovie: body.isMovie,
                 })
 
-                for (const title of body.title) {
+                for (const title of body.titles) {
                     await ShowName.create({
                         title: title.title,
-                        language: title.lang,
+                        language: title.language,
                         show: createdShow.id,
                         id: randomUUID(),
                     })
@@ -57,7 +57,7 @@ export default async function handler(
                         type: release.type,
                     })
                 }
-                res.status(201).end()
+                res.status(201).json({id: createdShow.id})
             })
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (e: any) {

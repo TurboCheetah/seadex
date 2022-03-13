@@ -67,7 +67,7 @@ const Form = forwardRef((props: BoxProps, ref) => {
             component="form"
             ref={ref}
             sx={{
-                ...flex('column'),
+                ...flex('column', 'column'),
                 margin: 'auto',
                 width: 'fit-content',
                 gap: 3,
@@ -80,7 +80,7 @@ const Form = forwardRef((props: BoxProps, ref) => {
     )
 })
 
-const availableLanguages = {
+const availableLanguages: { [k: string]: string } = {
     English: 'en',
     Romanji: 'romanji',
 }
@@ -109,7 +109,7 @@ function TitleForm(props: StepperButtonProps<TitleFormOutput>) {
         const isMovie = formGroup.get('isMovie')
         const data = zip(titles, languages).map(([title, language]) => ({
             title: title.toString(),
-            language: language.toString(),
+            language: availableLanguages[language.toString()],
         }))
         props.handleNext({ titles: data, isMovie: isMovie === 'on' })
     }
@@ -410,12 +410,25 @@ function StepperFinished({
     titles: TitleFormOutput
     releases: Release[]
 }) {
+    console.log(titles)
     const router = useRouter()
     const save = useCallback(
-        async (titles, releases) => {
-            console.log({ titles, releases })
-            const id = 'uuid'
-            await router.push(`/anime/${id}`)
+        async ({titles, isMovie}, releases) => {
+            const body = {
+                titles,
+                isMovie,
+                releases,
+            }
+            console.log({body})
+            const resp = await fetch('/api/anime', {
+                method: 'POST',
+                body: JSON.stringify(body),
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            const json = await resp.json()
+            await router.push(`/anime/${json.id}`)
         },
         [router]
     )

@@ -31,7 +31,6 @@ function getComparator(
     orderBy: SortableProperties
 ): (a: Release, b: Release) => number {
     const descComp = (a: Release, b: Release): number => {
-        console.log({ a, b })
         if (a.show[orderBy] > b.show[orderBy]) {
             return 1
         } else if (a.show[orderBy] < b.show[orderBy]) {
