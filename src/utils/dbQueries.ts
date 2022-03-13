@@ -1,49 +1,57 @@
-import {Show, ShowName} from "../modals";
-import type ReleaseType from "../modals/Release";
-import type ShowNameType from "../modals/ShowName";
-import {sequelize} from "../db";
-import {QueryTypes} from "sequelize";
+import { Show, ShowName } from '../modals'
+import type ReleaseType from '../modals/Release'
+import type ShowNameType from '../modals/ShowName'
+import { sequelize } from '../db'
+import { QueryTypes } from 'sequelize'
 
 export type ReleaseWithType = ReleaseType & { type: string }
 export type ShowWithTitle = {
-    id: string,
-    isMovie: boolean,
+    id: string
+    isMovie: boolean
     titles: ShowNameType[]
 }
-export type Release = { show: ShowWithTitle, releases: ReleaseWithType[] }
-export type ReleaseList = { show: ShowWithTitle, releases: ReleaseWithType[] }[]
+export type Release = { show: ShowWithTitle; releases: ReleaseWithType[] }
+export type ReleaseList = { show: ShowWithTitle; releases: ReleaseWithType[] }[]
 
 export const getAllReleases = async (): Promise<ReleaseList> => {
-    const shows = await Show.findAll({attributes: ['id', 'isMovie']});
-    return await Promise.all(shows.map(async show => {
-        const titles = await ShowName.findAll({
-            where: {
-                show: show.id
-            }
-        });
+    const shows = await Show.findAll({ attributes: ['id', 'isMovie'] })
+    return await Promise.all(
+        shows.map(async (show) => {
+            const titles = await ShowName.findAll({
+                where: {
+                    show: show.id,
+                },
+            })
 
-        const rows = await sequelize.query(`
+            const rows = await sequelize.query(
+                `
             SELECT releases.*, type
             FROM shows_releases
                      LEFT JOIN releases ON shows_releases.release = releases.id
             where show = ?;
-        `, {
-            replacements: [show.id],
-            type: QueryTypes.SELECT,
-        });
-        // const rows = await ShowRelease.findAll({where: {show: show.id}, include: Release, attributes: ['release.*', 'type']})
-        return {
-            show: {
-                id: show.id,
-                isMovie: show.isMovie,
-                titles
-            },
-            releases: rows as ReleaseWithType[]
-        }
-    }))
+        `,
+                {
+                    replacements: [show.id],
+                    type: QueryTypes.SELECT,
+                }
+            )
+            // const rows = await ShowRelease.findAll({where: {show: show.id}, include: Release, attributes: ['release.*', 'type']})
+            return {
+                show: {
+                    id: show.id,
+                    isMovie: show.isMovie,
+                    titles,
+                },
+                releases: rows as ReleaseWithType[],
+            }
+        })
+    )
 }
 
-export const getShowsReleases = async (showId: string, title?: string): Promise<ReleaseWithType[]> => {
+export const getShowsReleases = async (
+    showId: string,
+    title?: string
+): Promise<ReleaseWithType[]> => {
     // raw SQL > ORM for complex queries -- I can't get sequelize to work with this query
     const sql = `
 SELECT "shows_releases"."type",

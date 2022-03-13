@@ -1,20 +1,21 @@
-import {DataTypes, Model, Sequelize} from "sequelize";
-import type ShowName from "./ShowName";
+import { DataTypes, Model, Sequelize } from 'sequelize'
+import type ShowName from './ShowName'
+import type { Modals } from './index'
 
 export default class Show extends Model {
     declare id: string
     declare isMovie: boolean
-    declare titles: ShowName[] | string[];
+    declare titles: ShowName[] | string[]
 
-    static associate(models: any) {
+    static associate(models: Modals) {
         Show.hasMany(models.ShowName, {
             onDelete: 'RESTRICT',
             foreignKey: 'show',
-            as: 'titles'
+            as: 'titles',
         })
         models.ShowRelease.belongsTo(models.Show, {
             onDelete: 'CASCADE',
-            foreignKey: 'release'
+            foreignKey: 'release',
         })
     }
 }
@@ -24,7 +25,7 @@ export const init = (sequelize: Sequelize) =>
         {
             id: {
                 type: DataTypes.UUID,
-                primaryKey: true
+                primaryKey: true,
             },
             isMovie: {
                 type: DataTypes.BOOLEAN,
@@ -34,6 +35,6 @@ export const init = (sequelize: Sequelize) =>
         },
         {
             sequelize,
-            modelName: 'shows'
+            modelName: 'shows',
         }
     )

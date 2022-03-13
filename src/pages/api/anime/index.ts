@@ -1,16 +1,16 @@
-import type {NextApiRequest, NextApiResponse} from 'next'
-import Show from "../../../modals/Show";
-import Release from "../../../modals/Release";
-import ShowRelease from "../../../modals/ShowRelease";
-import {randomUUID} from "crypto";
-import {sequelize} from "../../../db";
-import {getAllReleases, ReleaseList} from "../../../utils/dbQueries";
-import ShowName from "../../../modals/ShowName";
-import {ensureServerAuth} from "../../../utils/auth";
+import type { NextApiRequest, NextApiResponse } from 'next'
+import Show from '../../../modals/Show'
+import Release from '../../../modals/Release'
+import ShowRelease from '../../../modals/ShowRelease'
+import { randomUUID } from 'crypto'
+import { sequelize } from '../../../db'
+import { getAllReleases, ReleaseList } from '../../../utils/dbQueries'
+import ShowName from '../../../modals/ShowName'
+import { ensureServerAuth } from '../../../utils/auth'
 
 interface CreateShowRequest {
-    title: { title: string, lang: string }[]
-    isMovie: true,
+    title: { title: string; lang: string }[]
+    isMovie: true
     releases: [Release & { type: string }]
 }
 
@@ -22,10 +22,12 @@ export default async function handler(
     case 'GET': {
         const releases = await getAllReleases()
         res.json(releases)
-        break;
+        break
     }
     case 'POST': {
-        if (await ensureServerAuth(req, res)) { return }
+        if (await ensureServerAuth(req, res)) {
+            return
+        }
 
         const body = req.body as CreateShowRequest
         try {
@@ -47,12 +49,12 @@ export default async function handler(
                 for (const release of body.releases) {
                     const createdRelease = await Release.create({
                         ...release,
-                        id: randomUUID()
+                        id: randomUUID(),
                     })
                     await ShowRelease.create({
                         show: createdShow.id,
                         release: createdRelease.id,
-                        type: release.type
+                        type: release.type,
                     })
                 }
                 res.status(201).end()
@@ -61,11 +63,11 @@ export default async function handler(
         } catch (e: any) {
             res.status(500).end(e.toString())
         }
-        break;
+        break
     }
     default:
         res.setHeader('Allow', ['GET', 'POST'])
         res.status(405).end(`Method ${req.method} Not Allowed`)
-        break;
+        break
     }
 }

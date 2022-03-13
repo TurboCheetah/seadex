@@ -1,17 +1,16 @@
-import {DataTypes, Model, Sequelize} from "sequelize";
+import { DataTypes, Model, Sequelize } from 'sequelize'
+import type { Modals } from './index'
 
 export default class ShowRelease extends Model {
     declare show: string
     declare release: string
 
-    static associate(models: any) {
+    static associate(models: Modals) {
         models.ShowRelease.belongsTo(models.Release, {
             onDelete: 'RESTRICT',
-            foreignKey: 'release'
+            foreignKey: 'release',
         })
-
     }
-
 }
 
 export const init = (sequelize: Sequelize) =>
@@ -22,8 +21,8 @@ export const init = (sequelize: Sequelize) =>
                 primaryKey: true,
                 references: {
                     model: 'shows',
-                    key: 'id'
-                }
+                    key: 'id',
+                },
             },
             release: {
                 type: DataTypes.UUID,
@@ -31,18 +30,17 @@ export const init = (sequelize: Sequelize) =>
                 primaryKey: true,
                 references: {
                     model: 'releases',
-                    key: 'id'
-                }
+                    key: 'id',
+                },
             },
             type: {
                 type: DataTypes.STRING,
-                allowNull: false
-            }
+                allowNull: false,
+            },
         },
         {
             sequelize,
             modelName: 'shows_releases',
-            indexes: [{unique: true, fields: ['release']}]
+            indexes: [{ unique: true, fields: ['release'] }],
         }
     )
-

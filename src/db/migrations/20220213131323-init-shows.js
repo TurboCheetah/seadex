@@ -1,11 +1,12 @@
-'use strict';
+/* eslint-disable @typescript-eslint/no-unused-vars */
+'use strict'
 
 module.exports = {
     async up(queryInterface, Sequelize) {
         await queryInterface.createTable('shows', {
             id: {
                 type: Sequelize.UUID,
-                primaryKey: true
+                primaryKey: true,
             },
             isMovie: {
                 type: Sequelize.BOOLEAN,
@@ -14,17 +15,16 @@ module.exports = {
             },
             createdAt: {
                 allowNull: false,
-                type: Sequelize.DATE
+                type: Sequelize.DATE,
             },
             updatedAt: {
                 allowNull: false,
-                type: Sequelize.DATE
-            }
-
-        });
+                type: Sequelize.DATE,
+            },
+        })
     },
 
     async down(queryInterface, Sequelize) {
-        await queryInterface.dropTable('shows');
-    }
-};
+        await queryInterface.dropTable('shows')
+    },
+}

@@ -1,9 +1,9 @@
-import React, {ReactNode} from 'react';
-import Box from '@mui/material/Box';
-import Stepper from '@mui/material/Stepper';
-import MuiStep from '@mui/material/Step';
-import StepLabel from '@mui/material/StepLabel';
-import Button from '@mui/material/Button';
+import React, { ReactNode } from 'react'
+import Box from '@mui/material/Box'
+import Stepper from '@mui/material/Stepper'
+import MuiStep from '@mui/material/Step'
+import StepLabel from '@mui/material/StepLabel'
+import Button from '@mui/material/Button'
 
 export interface StepperButtonProps<T> {
     activeStep: number
@@ -28,42 +28,45 @@ export function StepperButtons(props: StepperButtonProps<unknown>) {
                 {props.nextButtonText ?? 'Next'}
             </Button>
         </Box>
-
     )
 }
 
 interface Step {
-    label: string,
-    view: ReactNode,
+    label: string
+    view: ReactNode
 }
 
 interface StepperProps {
     steps: Step[]
-    finished: ReactNode,
+    finished: ReactNode
     activeStep: number
 }
 
-export default function HorizontalLinearStepper({activeStep, steps, finished}: StepperProps) {
+export default function HorizontalLinearStepper({
+    activeStep,
+    steps,
+    finished,
+}: StepperProps) {
     return (
         <Box sx={{ width: '100%' }}>
             <Stepper activeStep={activeStep}>
                 {steps.map((step) => {
-                    const stepProps: { completed?: boolean } = {};
+                    const stepProps: { completed?: boolean } = {}
                     const labelProps: {
-                        optional?: React.ReactNode;
-                    } = {};
+                        optional?: React.ReactNode
+                    } = {}
                     return (
                         <MuiStep key={step.label} {...stepProps}>
                             <StepLabel {...labelProps}>{step.label}</StepLabel>
                         </MuiStep>
-                    );
+                    )
                 })}
             </Stepper>
-            {activeStep === steps.length ? (finished) : (
-                <>
-                    {steps[activeStep].view}
-                </>
+            {activeStep === steps.length ? (
+                finished
+            ) : (
+                <>{steps[activeStep].view}</>
             )}
         </Box>
-    );
+    )
 }

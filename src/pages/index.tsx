@@ -1,28 +1,31 @@
-import type {GetServerSidePropsContext, NextPage} from 'next'
+import type { GetServerSidePropsContext, NextPage } from 'next'
 import Head from 'next/head'
-import {getAllReleases, ReleaseList} from "../utils/dbQueries";
-import Fab from '@mui/material/Fab';
-import AddIcon from '@mui/icons-material/Add';
-import React from "react";
-import {useSession} from "next-auth/react";
-import EnhancedTable from "../components/table/EnhancedTableHead";
-import {useRouter} from "next/router";
+import { getAllReleases, ReleaseList } from '../utils/dbQueries'
+import Fab from '@mui/material/Fab'
+import AddIcon from '@mui/icons-material/Add'
+import React from 'react'
+import { useSession } from 'next-auth/react'
+import EnhancedTable from '../components/table/EnhancedTableHead'
+import { useRouter } from 'next/router'
 
 const Home: NextPage<{ releases: string }> = (props) => {
-    const {data: session} = useSession()
+    const { data: session } = useSession()
     const router = useRouter()
 
     const handleClickOpen = async () => {
-        await router.push("/anime/new")
-    };
+        await router.push('/anime/new')
+    }
 
-
-    const releases = JSON.parse(props.releases) as ReleaseList;
+    const releases = JSON.parse(props.releases) as ReleaseList
     const newShowStuff = session && (
         <>
-            <Fab color="primary" aria-label="add" sx={{position: 'absolute', right: 24, bottom: 24}}
-                onClick={handleClickOpen}>
-                <AddIcon/>
+            <Fab
+                color="primary"
+                aria-label="add"
+                sx={{ position: 'absolute', right: 24, bottom: 24 }}
+                onClick={handleClickOpen}
+            >
+                <AddIcon />
             </Fab>
         </>
     )
@@ -30,10 +33,10 @@ const Home: NextPage<{ releases: string }> = (props) => {
         <>
             <Head>
                 <title>Seadex</title>
-                <meta name="description" content="A Certain Smoke's Index"/>
+                <meta name="description" content="A Certain Smoke's Index" />
             </Head>
             <main>
-                <EnhancedTable rows={releases}/>
+                <EnhancedTable rows={releases} />
             </main>
             {newShowStuff}
         </>
@@ -45,8 +48,8 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     const allReleases = await getAllReleases()
     return {
         props: {
-            releases: JSON.stringify(allReleases)
-        }
+            releases: JSON.stringify(allReleases),
+        },
     }
 }
 

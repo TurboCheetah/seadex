@@ -1,6 +1,6 @@
 // noinspection HtmlRequiredTitleElement
 
-import {Head, Html, Main, NextScript} from 'next/document'
+import { Head, Html, Main, NextScript } from 'next/document'
 
 export default function Document() {
     return (
@@ -15,11 +15,11 @@ export default function Document() {
                     href="https://fonts.googleapis.com/icon?family=Material+Icons"
                 />
 
-                <link rel="icon" type="image/png" href="/favicon.png"/>
+                <link rel="icon" type="image/png" href="/favicon.png" />
             </Head>
             <body>
-                <Main/>
-                <NextScript/>
+                <Main />
+                <NextScript />
             </body>
         </Html>
     )

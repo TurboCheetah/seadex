@@ -1,19 +1,28 @@
-import * as React from 'react';
-import {PropsWithChildren} from 'react';
-import Dialog from '@mui/material/Dialog';
-import useMediaQuery from '@mui/material/useMediaQuery';
-import {useTheme} from '@mui/material/styles';
-import {Breakpoint} from "@mui/material";
+import * as React from 'react'
+import { PropsWithChildren } from 'react'
+import Dialog from '@mui/material/Dialog'
+import useMediaQuery from '@mui/material/useMediaQuery'
+import { useTheme } from '@mui/material/styles'
+import { Breakpoint } from '@mui/material'
 
-export type Props = PropsWithChildren<{ open: boolean, setOpen: (value: boolean) => void, maxWidth?: Breakpoint }>
+export type Props = PropsWithChildren<{
+    open: boolean
+    setOpen: (value: boolean) => void
+    maxWidth?: Breakpoint
+}>
 
-export default function DialogBase({open, setOpen, children, maxWidth = "sm"}: Props) {
-    const theme = useTheme();
-    const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
+export default function DialogBase({
+    open,
+    setOpen,
+    children,
+    maxWidth = 'sm',
+}: Props) {
+    const theme = useTheme()
+    const fullScreen = useMediaQuery(theme.breakpoints.down('md'))
 
     const handleClose = () => {
-        setOpen(false);
-    };
+        setOpen(false)
+    }
 
     return (
         <div>
@@ -28,5 +37,5 @@ export default function DialogBase({open, setOpen, children, maxWidth = "sm"}: P
                 {children}
             </Dialog>
         </div>
-    );
+    )
 }

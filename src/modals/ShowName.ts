@@ -1,4 +1,5 @@
-import {DataTypes, Model, Sequelize} from "sequelize";
+import { DataTypes, Model, Sequelize } from 'sequelize'
+import type { Modals } from './index'
 
 export default class ShowName extends Model {
     declare id: string
@@ -6,11 +7,11 @@ export default class ShowName extends Model {
     declare title: string
     declare language: string
 
-    static associate(models: any) {
+    static associate(models: Modals) {
         ShowName.belongsTo(models.Show, {
             onDelete: 'CASCADE',
             foreignKey: 'show',
-            as: 'titles'
+            as: 'titles',
         })
     }
 }
@@ -26,23 +27,22 @@ export const init = (sequelize: Sequelize) =>
                 type: DataTypes.UUID,
                 primaryKey: true,
                 references: {
-                    'model': 'shows',
-                    key: 'id'
-                }
+                    model: 'shows',
+                    key: 'id',
+                },
             },
             title: {
                 type: DataTypes.TEXT,
-                allowNull: false
+                allowNull: false,
             },
             language: {
                 type: DataTypes.TEXT,
-                allowNull: false
+                allowNull: false,
             },
         },
         {
             sequelize,
             modelName: 'show_names',
-            indexes: [{unique: true, fields: ['title', 'language']}]
+            indexes: [{ unique: true, fields: ['title', 'language'] }],
         }
     )
-

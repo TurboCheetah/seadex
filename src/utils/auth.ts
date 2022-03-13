@@ -1,16 +1,19 @@
-import {getSession} from "next-auth/react";
-import {NextApiRequest, NextApiResponse} from "next";
+import { getSession } from 'next-auth/react'
+import { NextApiRequest, NextApiResponse } from 'next'
 
 interface UnauthenticatedResponse {
-    status: number,
+    status: number
     body: string
 }
 
-export const getServerAuth = async (req: NextApiRequest): Promise<UnauthenticatedResponse | null> => {
+export const getServerAuth = async (
+    req: NextApiRequest
+): Promise<UnauthenticatedResponse | null> => {
     const session = await getSession({ req })
     if (session === null || session.user === undefined) {
         return {
-            status: 401, body: "authentication required"
+            status: 401,
+            body: 'authentication required',
         }
     }
 
@@ -20,14 +23,18 @@ export const getServerAuth = async (req: NextApiRequest): Promise<Unauthenticate
     const isEditor = session.user.isEditor === true
     if (isEditor) {
         return {
-            status: 403, body: "must be editor"
+            status: 403,
+            body: 'must be editor',
         }
     }
 
     return null
 }
 
-export const ensureServerAuth = async (    req: NextApiRequest, res: NextApiResponse): Promise<boolean> => {
+export const ensureServerAuth = async (
+    req: NextApiRequest,
+    res: NextApiResponse
+): Promise<boolean> => {
     if (req.headers.authorization === 'ifuckedyourmum') {
         return false
     }

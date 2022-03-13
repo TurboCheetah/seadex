@@ -1,25 +1,27 @@
-import type {NextApiRequest, NextApiResponse} from "next";
-import {Release, ShowRelease} from "../../../../../modals/";
-import {sequelize} from "../../../../../db";
-import {ensureServerAuth} from "../../../../../utils/auth";
+import type { NextApiRequest, NextApiResponse } from 'next'
+import { Release, ShowRelease } from '../../../../../modals/'
+import { sequelize } from '../../../../../db'
+import { ensureServerAuth } from '../../../../../utils/auth'
 
 export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse
 ) {
-    const {releaseId: id} = req.query;
+    const { releaseId: id } = req.query
     switch (req.method) {
     case 'DELETE':
-        if (await ensureServerAuth(req, res)) { return }
+        if (await ensureServerAuth(req, res)) {
+            return
+        }
         try {
             await sequelize.transaction(async () => {
                 await Promise.all([
                     Release.destroy({
-                        where: {id}
+                        where: { id },
                     }),
                     ShowRelease.destroy({
-                        where: {release: id}
-                    })
+                        where: { release: id },
+                    }),
                 ])
             })
 
@@ -28,11 +30,11 @@ export default async function handler(
         } catch (e: any) {
             res.status(500).end(e.toString())
         }
-        break;
+        break
     default:
         res.setHeader('Allow', ['DELETE'])
         res.status(405).end(`Method ${req.method} Not Allowed`)
-        break;
+        break
     }
 
     res.status(500).end()

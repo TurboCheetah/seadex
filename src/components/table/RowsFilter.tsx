@@ -1,27 +1,27 @@
-import * as React from 'react';
-import MenuItem from '@mui/material/MenuItem';
-import Menu from '@mui/material/Menu';
-import FilterListIcon from "@mui/icons-material/FilterList";
-import IconButton from "@mui/material/IconButton";
-import {createContext, PropsWithChildren, useContext} from "react";
-import Tooltip from '@mui/material/Tooltip';
-
+import * as React from 'react'
+import MenuItem from '@mui/material/MenuItem'
+import Menu from '@mui/material/Menu'
+import FilterListIcon from '@mui/icons-material/FilterList'
+import IconButton from '@mui/material/IconButton'
+import { createContext, PropsWithChildren, useContext } from 'react'
+import Tooltip from '@mui/material/Tooltip'
 
 export enum Filter {
     All,
     ShowsOnly,
-    MoviesOnly
+    MoviesOnly,
 }
 
-
-const defaultValue: { filter: Filter, setFilter?: (f: Filter) => void } = {filter: Filter.All}
+const defaultValue: { filter: Filter; setFilter?: (f: Filter) => void } = {
+    filter: Filter.All,
+}
 export const FilterContext = createContext(defaultValue)
 
 export function FilterContextProvider(props: PropsWithChildren<unknown>) {
-    const [filter, setFilter] = React.useState(Filter.All);
+    const [filter, setFilter] = React.useState(Filter.All)
 
     return (
-        <FilterContext.Provider value={{filter, setFilter}}>
+        <FilterContext.Provider value={{ filter, setFilter }}>
             {props.children}
         </FilterContext.Provider>
     )
@@ -29,28 +29,27 @@ export function FilterContextProvider(props: PropsWithChildren<unknown>) {
 
 export const useFilter = () => useContext(FilterContext)
 
-const options = [
-    'All',
-    'Shows Only',
-    'Movies Only',
-];
+const options = ['All', 'Shows Only', 'Movies Only']
 
 export default function RowsFilter() {
-    const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-    const {filter: selectedIndex, setFilter: setSelectedIndex} = useFilter()
-    const open = Boolean(anchorEl);
+    const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
+    const { filter: selectedIndex, setFilter: setSelectedIndex } = useFilter()
+    const open = Boolean(anchorEl)
     const handleClickListItem = (event: React.MouseEvent<HTMLElement>) => {
-        setAnchorEl(event.currentTarget);
-    };
+        setAnchorEl(event.currentTarget)
+    }
 
-    const handleMenuItemClick = (event: React.MouseEvent<HTMLElement>, index: number) => {
-        setSelectedIndex && setSelectedIndex(index);
-        setAnchorEl(null);
-    };
+    const handleMenuItemClick = (
+        event: React.MouseEvent<HTMLElement>,
+        index: number
+    ) => {
+        setSelectedIndex && setSelectedIndex(index)
+        setAnchorEl(null)
+    }
 
     const handleClose = () => {
-        setAnchorEl(null);
-    };
+        setAnchorEl(null)
+    }
 
     return (
         <>
@@ -80,6 +79,5 @@ export default function RowsFilter() {
                 ))}
             </Menu>
         </>
-    );
+    )
 }
-
