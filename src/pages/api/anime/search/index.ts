@@ -1,10 +1,10 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import Fuse from 'fuse.js'
-import { getAllReleases, ReleaseList, ReleaseWithType, ShowWithTitle } from '../../../../utils/dbQueries'
+import { getAllReleases, ReleaseWithType, ShowWithTitle } from '../../../../utils/dbQueries'
 
 export default async function handler(
     req: NextApiRequest,
-    res: NextApiResponse<ReleaseList | { id: string } | Fuse.FuseResult<{
+    res: NextApiResponse<Fuse.FuseResult<{
         show: ShowWithTitle;
         releases: ReleaseWithType[];
     }>[]>
